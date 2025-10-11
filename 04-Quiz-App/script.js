@@ -11,7 +11,7 @@ const questions = [
         ]
     },
     {
-        question: "What is the currency of Usa",
+        question: "What is the currency of the USA?",
         answers: [
             { text: "Rupee", correct: false },
             { text: "Pound", correct: false },
@@ -25,7 +25,7 @@ const questions = [
             { text: "Kalahari", correct: false },
             { text: "Gobi", correct: false },
             { text: "Sahara", correct: false },
-            { text: "Antarctica", correct: true }
+            { text: "Antarctic Polar Desert", correct: true } // Corrected answer text for clarity
         ]
     },
     {
@@ -39,9 +39,9 @@ const questions = [
     },
 ];
 
-// FIX: Changed "question" to "Question" to match the HTML id.
 const questionElement = document.getElementById("Question");
-const answerButton = document.getElementById("answer-buttons");
+// FIX 1: Renamed variable to 'answerButtons' for consistency.
+const answerButtons = document.getElementById("answer-buttons");
 const nextButton = document.getElementById("next-btn");
 
 let currentQuestionIndex = 0;
@@ -64,16 +64,69 @@ function showQuestion() {
         const button = document.createElement("button");
         button.innerHTML = answer.text;
         button.classList.add("btn");
-        answerButton.appendChild(button);
-        // The rest of your logic to handle clicks would go here
+        // Use the consistent variable name 'answerButtons'
+        answerButtons.appendChild(button);
+
+        if(answer.correct) {
+            button.dataset.correct = answer.correct;
+        }
+
+        button.addEventListener("click", selectAnswer);
     });
 }
 
 function resetState() {
     nextButton.style.display = "none";
-    while (answerButton.firstChild) {
-        answerButton.removeChild(answerButton.firstChild);
+    // Use the consistent variable name 'answerButtons'
+    while (answerButtons.firstChild) {
+        answerButtons.removeChild(answerButtons.firstChild);
     }
 }
 
+function selectAnswer(e) {
+    const selectedBtn = e.target;
+    const isCorrect = selectedBtn.dataset.correct === "true";
+
+    if (isCorrect) {
+        selectedBtn.classList.add("correct");
+        score++;
+    } else {
+        selectedBtn.classList.add("incorrect");
+    }
+
+    // Use the consistent variable name 'answerButtons'
+    Array.from(answerButtons.children).forEach(button => {
+        if (button.dataset.correct === "true") {
+            button.classList.add("correct");
+        }
+        button.disabled = true;
+    });
+    nextButton.style.display = "block";
+}
+
+function showScore(){
+    resetState();
+    questionElement.innerHTML = `You scored ${score} out of ${questions.length}!`;
+    nextButton.innerHTML = "Play Again";
+    nextButton.style.display = "block";
+}
+
+function handleNextButton() {
+    currentQuestionIndex++;
+    if(currentQuestionIndex < questions.length){
+        showQuestion();
+    } else {
+        showScore();
+    }
+}
+
+nextButton.addEventListener("click", () => {
+   if(currentQuestionIndex < questions.length) {
+    handleNextButton();
+   } else {
+    startQuiz();
+   }
+});
+
+// FIX 2: Added this line to start the quiz when the script loads.
 startQuiz();
