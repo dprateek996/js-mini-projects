@@ -128,5 +128,4 @@ nextButton.addEventListener("click", () => {
    }
 });
 
-// FIX 2: Added this line to start the quiz when the script loads.
 startQuiz();
